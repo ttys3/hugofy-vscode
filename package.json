@@ -1,71 +1,85 @@
 {
-  "name": "hugofy",
-  "displayName": "hugofy",
-  "description": "Make your life easier to use Hugo static site generator in vscode",
-  "version": "0.1.2",
-  "publisher": "akmittal",
-  "icon": "hugofy.png",
-  "engines": {
-    "vscode": "^1.5.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "*"
-  ],
-  "main": "./out/src/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "hugofy.build",
-        "title": "Hugofy: Build"
-      },
-      {
-        "command": "hugofy.getVersion",
-        "title": "Hugofy: Version"
-      },
-      {
-        "command": "hugofy.downloadTheme",
-        "title": "Hugofy: Download Themes"
-      },
-      {
-        "command": "hugofy.newPost",
-        "title": "Hugofy: New Post"
-      },
-      {
-        "command": "hugofy.newSite",
-        "title": "Hugofy: New Site"
-      },
-      {
-        "command": "hugofy.setTheme",
-        "title": "Hugofy: Set Theme"
-      },
-      {
-        "command": "hugofy.startServer",
-        "title": "Hugofy: Start Server"
-      },
-      {
-        "command": "hugofy.stopServer",
-        "title": "Hugofy: Stop Server"
-      }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "@types/mocha": "^2.2.34",
-    "@types/node": "^6.14.9",
-    "mocha": "^6.2.2",
-    "tslint": "^4.2.0",
-    "typescript": "^2.1.0",
-    "vscode": "^1.1.36"
-  },
-  "dependencies": {
-    "opn": "^4.0.2"
-  }
+	"name": "hugofy",
+	"displayName": "hugofy",
+	"description": "Make your life easier to use Hugo static site generator in vscode",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.44.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"menus": {
+			"explorer/context": [
+				{
+					"when": "explorerResourceIsFolder",
+					"command": "hugofy.newPost",
+					"group": "hugo"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "hugofy.build",
+				"title": "Hugofy: Build"
+			},
+			{
+				"command": "hugofy.getVersion",
+				"title": "Hugofy: Version"
+			},
+			{
+				"command": "hugofy.downloadTheme",
+				"title": "Hugofy: Download Themes"
+			},
+			{
+				"command": "hugofy.newPost",
+				"title": "Hugofy: New Post"
+			},
+			{
+				"command": "hugofy.newSite",
+				"title": "Hugofy: New Site"
+			},
+			{
+				"command": "hugofy.setTheme",
+				"title": "Hugofy: Set Theme"
+			},
+			{
+				"command": "hugofy.startServer",
+				"title": "Hugofy: Start Server"
+			},
+			{
+				"command": "hugofy.stopServer",
+				"title": "Hugofy: Stop Server"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.44.0",
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"eslint": "^6.8.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.2",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
+		"open": "^7.0.3"
+	}
 }

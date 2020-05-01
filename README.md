@@ -2,8 +2,8 @@
 
 Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo static site generator](http://gohugo.io)
 
-
 ## Features
+
 1. Create new hugo site
 2. Create posts
 3. Build site
@@ -11,6 +11,7 @@ Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo stati
 5. Download available hugo themes.
 
 ## Usage
+
 Use command pallete ```Ctrl+Shift+P``` and type Hugofy
 Once the server has been started you can view the output by directing your browser to: http://localhost:9081
 
