@@ -89,45 +89,46 @@ const downloadTheme = () => {
     });
 };
 
-const createHugoPost = function(postPath: string, newPostFilePath: string) {
-	// console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
-	const newPostCmd = spawn('hugo', ['new', postPath, `-s="${vscode.workspace.rootPath}"`], { shell: true });
-	newPostCmd.stdout.on('data', (data) => {
-		vscode.window.showInformationMessage(data);
-	});
-	newPostCmd.stderr.on('data', (data) => {
-		console.log(`stderr: ${data}`);
-		vscode.window.showInformationMessage(`Error creating new post.`);
-	});
-	newPostCmd.on('close', (code) => {
-		if (code === 0) {
-			let uripath = vscode.Uri.file(newPostFilePath);
-			vscode.workspace.openTextDocument(uripath).then((document) => {
-				vscode.window.showTextDocument(document);
-			}, err => {
-				console.log(err);
-			});
-		}
-		else {
-			vscode.window.showErrorMessage(`Error creating new post.`);
-		}
-	});
+const createHugoPost = function (postPath: string, newPostFilePath: string) {
+    // console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
+    const newPostCmd = spawn('hugo', ['new', postPath, `-s="${vscode.workspace.rootPath}"`], { shell: true });
+    newPostCmd.stdout.on('data', (data) => {
+        vscode.window.showInformationMessage(data);
+    });
+    newPostCmd.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+        vscode.window.showInformationMessage(`Error creating new post.`);
+    });
+    newPostCmd.on('close', (code) => {
+        if (code === 0) {
+            let uripath = vscode.Uri.file(newPostFilePath);
+            vscode.workspace.openTextDocument(uripath).then((document) => {
+                vscode.window.showTextDocument(document);
+            }, err => {
+                console.log(err);
+            });
+        }
+        else {
+            vscode.window.showErrorMessage(`Error creating new post.`);
+        }
+    });
 }
 
 const newPost = (args: any[]) => {
-	if (args != undefined && 'path' in args) {
-		// create index.md fast under current context directory
-		const hugoContentPath = path.join(vscode.workspace.rootPath, 'content');
-		const newPostPath = path.join(args['path'], 'index.md');
-		const postPath = newPostPath.substring(hugoContentPath.length);
-		createHugoPost(postPath, newPostPath);
-	} else {
-		vscode.window.showInputBox({ placeHolder: 'Enter filename', value: 'index.md' }).then((filename) => {
-			const newPostPath = path.join(vscode.workspace.rootPath, 'content', 'post', filename);
-			const postPath = 'post' + path.sep + filename;
-			createHugoPost(postPath, newPostPath);
-		});
-	}
+    if (args != undefined && 'path' in args) {
+        // create index.md fast under current context directory
+        const hugoContentPath = path.join(vscode.workspace.rootPath, 'content');
+        const newPostPath = path.join(args['path'], 'index.md');
+        const postPath = newPostPath.substring(hugoContentPath.length);
+        createHugoPost(postPath, newPostPath);
+    } else {
+        vscode.window.showInputBox({ placeHolder: 'Enter filename', value: 'index.md' }).then((filename) => {
+            filename = filename.replace(/\s/g, '-').toLowerCase();
+            const newPostPath = path.join(vscode.workspace.rootPath, 'content', 'post', filename);
+            const postPath = 'post' + path.sep + filename;
+            createHugoPost(postPath, newPostPath);
+        });
+    }
 };
 
 const setTheme = () => {
@@ -197,16 +198,16 @@ const stopServer = () => {
 };
 
 function activate(context) {
-	context.subscriptions.push(
-		vscode.commands.registerCommand('hugofy.getVersion', getVersion),
-		vscode.commands.registerCommand('hugofy.newSite', newSite),
-		vscode.commands.registerCommand('hugofy.newPost', newPost),
-		vscode.commands.registerCommand('hugofy.build', build),
-		vscode.commands.registerCommand('hugofy.downloadTheme', downloadTheme),
-		vscode.commands.registerCommand('hugofy.setTheme', setTheme),
-		vscode.commands.registerCommand('hugofy.startServer', startServer),
-		vscode.commands.registerCommand('hugofy.stopServer', stopServer)
-	);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('hugofy.getVersion', getVersion),
+        vscode.commands.registerCommand('hugofy.newSite', newSite),
+        vscode.commands.registerCommand('hugofy.newPost', newPost),
+        vscode.commands.registerCommand('hugofy.build', build),
+        vscode.commands.registerCommand('hugofy.downloadTheme', downloadTheme),
+        vscode.commands.registerCommand('hugofy.setTheme', setTheme),
+        vscode.commands.registerCommand('hugofy.startServer', startServer),
+        vscode.commands.registerCommand('hugofy.stopServer', stopServer)
+    );
 }
 
 exports.activate = activate;
