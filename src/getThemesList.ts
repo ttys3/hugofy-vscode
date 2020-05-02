@@ -1,6 +1,13 @@
-import * as https from 'https'
 
-export const getThemesList = (): Promise<Array<any>> => {
+import { https } from 'follow-redirects'
+
+export class HugoTheme {
+    constructor(
+        public name: string,
+        public url: string) { }
+}
+
+export const getThemesList = (): Promise<Array<HugoTheme>> => {
     const options = {
         hostname: 'api.github.com',
         port: 443,
@@ -17,19 +24,15 @@ export const getThemesList = (): Promise<Array<any>> => {
             res.on('end', () => {
                 try {
                     let parsedData = JSON.parse(data)
+                    // console.log('parsedData: %o', parsedData)
                     let items = parsedData
                         .filter(((item: any) =>
-                            (item.name !== '.gitmodules' &&
+                            (item.name.substring(0, 1) !== '.' &&
+                                item.name.substring(0, 1) !== '_' &&
                                 item.name !== 'LICENSE' &&
                                 item.name !== 'README.md')
-                        )).map((item: any) =>
-                            ({
-                                name: item.name,
-                                url: item.url
-                            })
-                        )
+                        )).map((item: any) => new HugoTheme(item.name, item.url))
                     resolve(items)
-
                 } catch (e) {
                     reject(e)
                 }
@@ -40,7 +43,12 @@ export const getThemesList = (): Promise<Array<any>> => {
 }
 
 export const getThemeGitURL = (themedata: any): Promise<string> => {
-    console.log(themedata)
+    if (themedata == undefined) {
+        console.error("hugofy: getThemeGitURL(): themedata can not be undefined")
+        return new Promise((resolve, reject) => {
+            reject(new Error("hugofy: getThemeGitURL(): abort due to themedata undefined"))
+        })
+    }
     const options = {
         hostname: 'api.github.com',
         port: 443,

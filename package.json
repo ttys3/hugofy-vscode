@@ -4,7 +4,7 @@
 	"repository": "https://github.com/ttys3/hugofy-vscode",
 	"displayName": "hugofy",
 	"description": "modified hugofy extension with extra support for hugo page bundles",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"icon": "hugo.png",
 	"engines": {
 		"vscode": "^1.44.0"
@@ -106,6 +106,8 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
+		"@types/follow-redirects": "^1.8.0",
+		"follow-redirects": "^1.11.0",
 		"open": "^7.0.3",
 		"transliteration": "^2.1.8"
 	}

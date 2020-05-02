@@ -57,6 +57,12 @@ code .
 
 ## Known Issues
 
+for some themes which need specific config,
+
+you'll need copy config to your `config.toml` from `themes/[Hugo theme name]/exampleSite/config.toml` after new theme installed,
+
+otherwise the theme will not work
+
 ## Release Notes
 
 ## 0.1.0

@@ -90,14 +90,13 @@ const downloadTheme = () => {
                     console.info(`hugofy git clone stdout: ${data}`)
                 })
                 downloadThemeCmd.stderr.on('data', (data: any) => {
-                    console.error(`stderr ${data}`)
+                    console.log(`hugofy git clone stderr ${data}`)
                     //vscode.window.showInformationMessage(`Error downloading theme. Make sure git is installed.`)
                 })
                 downloadThemeCmd.on('close', (code: number) => {
                     if (code === 0) {
                         vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
-                    }
-                    else {
+                    } else {
                         vscode.window.showErrorMessage(`Error downloading theme. Exit code ${code}`)
                     }
                 })
@@ -118,7 +117,7 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
     // console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
     const newPostCmd = spawn('hugo', ['new', postPath, `-s="${getRootPath()}"`], { shell: true })
     newPostCmd.stdout.on('data', (data: any) => {
-        vscode.window.showInformationMessage(data)
+        vscode.window.showInformationMessage(data.toString())
     })
     newPostCmd.stderr.on('data', (data: any) => {
         console.error(`stderr: ${data}`)
