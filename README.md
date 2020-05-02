@@ -32,20 +32,27 @@ Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo stati
 
     Japanese Romaji: `私は ひらがな が大好き/index.md` => `ha-hiragana-gaki/index.md`
 
-
 ## Usage
 
 Use command pallete ```Ctrl+Shift+P``` and type Hugofy
 Once the server has been started you can view the output by directing your browser to: http://localhost:9081
 
+## How to reset theme config
+
+this extension saved current theme name in `.vscode/launch.json`.
+
+edit `.vscode/launch.json` remve the key `defaultTheme` and re-open vscode
+
+or simply remove `.vscode/launch.json`
+
 ## Extension Settings
 
-## How to contribute
+## How to contribute (for extension developer users)
 
 `eamodio.tsl-problem-matcher` extension provides `$ts-webpack`, you need install it:
 
 ```bash
-: `ext install eamodio.tsl-problem-matcher`
+ext install eamodio.tsl-problem-matcher
 ```
 
 ```bash
@@ -64,6 +71,47 @@ you'll need copy config to your `config.toml` from `themes/[Hugo theme name]/exa
 otherwise the theme will not work
 
 ## Release Notes
+
+## 0.1.8
+
+- fix: fixup set theme
+
+## 0.1.7
+
+- fix: fixup theme download
+
+## 0.1.6
+
+- refactor: refine console log
+- docs: update development document
+
+## 0.1.5
+
+- use [transliteration](https://www.npmjs.com/package/transliteration) instead of limax
+  which cause problem under webpack and has too many dependencies
+
+- use webpack to [bundle the extension](https://code.visualstudio.com/api/working-with-extensions/bundling-extension),
+  thanks [this PR](https://github.com/Microsoft/vscode-references-view/pull/50)
+
+## 0.1.4
+
+- chore: fixup getThemesList.ts line ending (CRLF to LF)
+- docs: updated CHANGELOG.md and README.md
+
+## 0.1.3
+
+- chore: extension logo added
+
+## 0.1.2
+
+- docs: updated CHANGELOG.md and README.md
+
+## 0.1.1
+
+- refactor: lint the code, more friendly error message
+- fix: do not start the server again if already started
+- feat: add `New Post` action on current folder right click event
+- feat: support normalize path name to **slug** friendly path
 
 ## 0.1.0
 

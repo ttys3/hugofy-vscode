@@ -7,6 +7,20 @@ export class HugoTheme {
         public url: string) { }
 }
 
+const normalizeThemeDirName = (themeRepoDir: string): string => {
+    themeRepoDir = themeRepoDir.toLowerCase()
+    // hugo-xxx-theme
+    if (/^hugo-[\w_-]+-theme$/.test(themeRepoDir)) {
+        return themeRepoDir.replace(/^hugo-/, '').replace(/-theme$/, '')
+    } else if (/^hugo-theme-[\w_-]+$/.test(themeRepoDir)) {
+        return themeRepoDir.replace(/^hugo-theme-/, '')
+    } else if (/hugo-[\w_-]+$/.test(themeRepoDir)) {
+        return themeRepoDir.replace(/^hugo-/, '')
+    } else {
+        return themeRepoDir
+    }
+}
+
 export const getThemesList = (): Promise<Array<HugoTheme>> => {
     const options = {
         hostname: 'api.github.com',
@@ -31,7 +45,7 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
                                 item.name.substring(0, 1) !== '_' &&
                                 item.name !== 'LICENSE' &&
                                 item.name !== 'README.md')
-                        )).map((item: any) => new HugoTheme(item.name, item.url))
+                        )).map((item: any) => new HugoTheme(normalizeThemeDirName(item.name), item.url))
                     resolve(items)
                 } catch (e) {
                     reject(e)

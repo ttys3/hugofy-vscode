@@ -4,7 +4,7 @@
 	"repository": "https://github.com/ttys3/hugofy-vscode",
 	"displayName": "hugofy",
 	"description": "modified hugofy extension with extra support for hugo page bundles",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"icon": "hugo.png",
 	"engines": {
 		"vscode": "^1.44.0"
