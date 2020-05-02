@@ -9,7 +9,8 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as opn from 'open'
 import * as os from 'os'
-import slug = require('limax')
+import { slugify } from 'transliteration'
+const slugifyConf = { ignore: ['/'], trim: true, lowercase: true}
 
 const getDirectories = (p: string) => fs.readdirSync(p).filter((f: string) => fs.statSync(p + '/' + f).isDirectory())
 
@@ -143,8 +144,8 @@ const newPost = (args: any[]) => {
             return
         }
         const filePath = path.normalize(path.dirname(filename))
-        const fileBasename = slug(path.basename(filename), { tone: false, custom: { '.': '.' } })
-        const normalizedPath = filePath.split('/').map((dirname: string) => slug(dirname, { tone: false }))
+        const fileBasename = slugify(path.basename(filename), slugifyConf)
+        const normalizedPath = filePath.split('/').map((dirname: string) => slugify(dirname, slugifyConf))
         // normalize filename
         filename = path.join(...normalizedPath, fileBasename)
         console.log('normalize filename: %s', filename)

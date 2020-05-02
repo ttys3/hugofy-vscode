@@ -4,6 +4,14 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.1.5
+
+- use [transliteration](https://www.npmjs.com/package/transliteration) instead of limax
+  which cause problem under webpack and has too many dependencies
+
+- use webpack to [bundle the extension](https://code.visualstudio.com/api/working-with-extensions/bundling-extension),
+  thanks [this PR](https://github.com/Microsoft/vscode-references-view/pull/50)
+
 ## 0.1.4
 
 - chore: fixup getThemesList.ts line ending (CRLF to LF)
