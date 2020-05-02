@@ -115,20 +115,30 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
 }
 
 const newPost = (args: any[]) => {
-    if (args != undefined && 'path' in args) {
-        // create index.md fast under current context directory
-        const hugoContentPath = path.join(vscode.workspace.rootPath, 'content');
-        const newPostPath = path.join(args['path'], 'index.md');
-        const postPath = newPostPath.substring(hugoContentPath.length);
-        createHugoPost(postPath, newPostPath);
-    } else {
-        vscode.window.showInputBox({ placeHolder: 'Enter filename', value: 'index.md' }).then((filename) => {
-            filename = filename.replace(/\s/g, '-').toLowerCase();
+
+    vscode.window.showInputBox({ placeHolder: 'Enter filename', value: 'index.md' }).then((filename) => {
+        // normalize filename
+        filename = filename.replace(/\s/g, '-').toLowerCase();
+        // if calls come from right menu click
+        if (args != undefined && 'path' in args) {
+            // create index.md fast under current context directory
+            const hugoContentPath = path.join(vscode.workspace.rootPath, 'content');
+            const newPostPath = path.join(args['path'], filename);
+            const postPath = newPostPath.substring(hugoContentPath.length);
+
+            const postDirPath = path.join(vscode.workspace.rootPath, 'content', 'post');
+            if (postDirPath == args['path'] && filename === 'index.md') {
+                vscode.window.showErrorMessage(`page bundle should has its own sub-directory!`);
+                return;
+            }
+            createHugoPost(postPath, newPostPath);
+        } else {
             const newPostPath = path.join(vscode.workspace.rootPath, 'content', 'post', filename);
             const postPath = 'post' + path.sep + filename;
             createHugoPost(postPath, newPostPath);
-        });
-    }
+        }
+    });
+
 };
 
 const setTheme = () => {
