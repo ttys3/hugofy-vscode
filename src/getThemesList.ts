@@ -1,4 +1,4 @@
-const https = require('https');
+const https = require('https')
 
 
 export const getThemesList = (): Promise<Array<any>> => {
@@ -10,37 +10,37 @@ export const getThemesList = (): Promise<Array<any>> => {
         headers: {
             'User-Agent': 'akmittal',
         }
-    };
+    }
     return new Promise((resolve, reject) => {
-        https.get(options, (res) => {
-            let data = '';
-            res.on('data', (chunk) => data += chunk);
+        https.get(options, (res: any) => {
+            let data = ''
+            res.on('data', (chunk: any) => data += chunk)
             res.on('end', () => {
                 try {
-                    let parsedData = JSON.parse(data);
+                    let parsedData = JSON.parse(data)
                     let items = parsedData
-                        .filter((item =>
+                        .filter(((item: any) =>
                             (item.name !== '.gitmodules' &&
                                 item.name !== 'LICENSE' &&
                                 item.name !== 'README.md')
-                        )).map(item =>
+                        )).map((item: any) =>
                             ({
                                 name: item.name,
                                 url: item.url
                             })
-                        );
-                    resolve(items);
+                        )
+                    resolve(items)
 
                 } catch (e) {
-                    reject(e);
+                    reject(e)
                 }
-            });
+            })
 
-        });
-    });
-};
-export const getThemeGitURL = (themedata) => {
-    console.log(themedata);
+        })
+    })
+}
+export const getThemeGitURL = (themedata: any) => {
+    console.log(themedata)
     const options = {
         hostname: 'api.github.com',
         port: 443,
@@ -49,21 +49,21 @@ export const getThemeGitURL = (themedata) => {
         headers: {
             'User-Agent': 'akmittal',
         }
-    };
+    }
     return new Promise((resolve, reject) => {
-        https.get(options, (res) => {
-            let data = '';
-            res.on('data', (chunk) => data += chunk);
+        https.get(options, (res: any) => {
+            let data = ''
+            res.on('data', (chunk: any) => data += chunk)
             res.on('end', () => {
                 try {
-                    let parsedData = JSON.parse(data);
-                    let items = parsedData;
-                    resolve(items.submodule_git_url);
+                    let parsedData = JSON.parse(data)
+                    let items = parsedData
+                    resolve(items.submodule_git_url)
                 } catch (e) {
-                    reject(e);
+                    reject(e)
                 }
-            });
+            })
 
-        });
-    });
-};
+        })
+    })
+}

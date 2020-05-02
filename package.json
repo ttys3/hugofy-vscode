@@ -80,6 +80,7 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
+		"limax": "^2.0.0",
 		"open": "^7.0.3"
 	}
 }
