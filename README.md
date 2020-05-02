@@ -11,7 +11,7 @@ Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo stati
 3. Build site
 4. Run and stop server
 5. Download available hugo themes.
-6. `New Post` action on current folder right click event
+6. Right click on current folder to Create post relative to current folder
 7. Auto normalize path name to **slug** friendly path
 
     Currently supports, but not limited to, the following scripts:
@@ -36,6 +36,10 @@ Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo stati
 
 Use command pallete ```Ctrl+Shift+P``` and type Hugofy
 Once the server has been started you can view the output by directing your browser to: http://localhost:9081
+
+> create post via command pallete ```Ctrl+Shift+P```, the file path is relative to `content/post` directory.
+>
+> create post via right click on current folder, the file path is relative to current folder.
 
 ## How to reset theme config
 
@@ -71,6 +75,10 @@ you'll need copy config to your `config.toml` from `themes/[Hugo theme name]/exa
 otherwise the theme will not work
 
 ## Release Notes
+
+## 0.1.9
+
+- docs: update README.md
 
 ## 0.1.8
 
