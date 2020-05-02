@@ -1,11 +1,13 @@
 # hugofy README
 
+This is a modified Hugofy extension with extra support for hugo [Page Bundles](https://gohugo.io/content-management/page-bundles/)
+
 Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo static site generator](http://gohugo.io)
 
 ## Features
 
 1. Create new hugo site
-2. Create posts
+2. Create posts (support right click on folder)
 3. Build site
 4. Run and stop server
 5. Download available hugo themes.

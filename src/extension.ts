@@ -30,8 +30,8 @@ const getVersion = () => {
     })
 }
 const newSite = () => {
-    if (vscode.workspace.rootPath) {
-        const newSiteCmd = spawn('hugo', ['new', 'site', `"${vscode.workspace.rootPath}"`], { shell: true })
+    if (getRootPath()) {
+        const newSiteCmd = spawn('hugo', ['new', 'site', `"${getRootPath()}"`], { shell: true })
         newSiteCmd.stdout.on('data', (data: any) => {
             console.log(`stdout: ${data}`)
         })
@@ -43,13 +43,13 @@ const newSite = () => {
                 vscode.window.showErrorMessage('Error getting hugo version, Make sure hugo is available in path.')
             }
             else {
-                vscode.window.showInformationMessage(`Congratulations! Your new Hugo site is created in ${vscode.workspace.rootPath} test`)
+                vscode.window.showInformationMessage(`Congratulations! Your new Hugo site is created in ${getRootPath()} test`)
             }
         })
     }
 }
 const build = () => {
-    const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${vscode.workspace.rootPath}"`], { shell: true })
+    const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${getRootPath()}"`], { shell: true })
     buildCmd.stdout.on('data', (data: any) => {
         console.log(`std ${data}`)
         vscode.window.showInformationMessage(data.toString())
@@ -65,13 +65,24 @@ const build = () => {
         }
     })
 }
+
+const getRootPath = (): string => {
+    // `workspaceFolders` List of workspace folders or undefined when no folder is open.
+    // Note that the first entry corresponds to the value of rootPath.
+    if (vscode.workspace.workspaceFolders == undefined) {
+        vscode.window.showErrorMessage('Error: you need open a folder')
+        return ''
+    }
+    return vscode.workspace.workspaceFolders[0].uri.path
+}
+
 const downloadTheme = () => {
     themeUtils.getThemesList().then((themeList: any) => {
         const themeNames = themeList.map((themeItem: any) => themeItem.name)
         vscode.window.showQuickPick(themeNames).then((selection: any) => {
             const themeData = themeList.find((themeItem: any) => themeItem.name === selection)
             themeUtils.getThemeGitURL(themeData).then((gitURL: string) => {
-                const themePath = path.join(vscode.workspace.rootPath, 'themes', themeData.name)
+                const themePath = path.join(getRootPath(), 'themes', themeData.name)
                 const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
                 downloadThemeCmd.stdout.on('data', (data: any) => {
                     console.log(`stdout: ${data}`)
@@ -103,7 +114,7 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
         return
     }
     // console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
-    const newPostCmd = spawn('hugo', ['new', postPath, `-s="${vscode.workspace.rootPath}"`], { shell: true })
+    const newPostCmd = spawn('hugo', ['new', postPath, `-s="${getRootPath()}"`], { shell: true })
     newPostCmd.stdout.on('data', (data: any) => {
         vscode.window.showInformationMessage(data)
     })
@@ -140,11 +151,11 @@ const newPost = (args: any[]) => {
         // if calls come from right menu click
         if (args != undefined && 'path' in args) {
             // create index.md fast under current context directory
-            const hugoContentPath = path.join(vscode.workspace.rootPath, 'content')
+            const hugoContentPath = path.join(getRootPath(), 'content')
             const newPostPath = path.join(args['path'], filename)
             const postPath = newPostPath.substring(hugoContentPath.length)
 
-            const postDirPath = path.join(vscode.workspace.rootPath, 'content', 'post')
+            const postDirPath = path.join(getRootPath(), 'content', 'post')
             if (postDirPath == args['path'] && filename === 'index.md') {
                 vscode.window.showErrorMessage(`page bundle should has its own sub-directory!`)
                 return
@@ -155,7 +166,7 @@ const newPost = (args: any[]) => {
                 vscode.window.showErrorMessage(`page bundle should has its own sub-directory!`)
                 return
             }
-            const newPostPath = path.join(vscode.workspace.rootPath, 'content', 'post', filename)
+            const newPostPath = path.join(getRootPath(), 'content', 'post', filename)
             const postPath = 'post' + path.sep + filename
             createHugoPost(postPath, newPostPath)
         }
@@ -163,11 +174,11 @@ const newPost = (args: any[]) => {
 }
 
 const setTheme = () => {
-    const themeFolder = path.join(vscode.workspace.rootPath, 'themes')
+    const themeFolder = path.join(getRootPath(), 'themes')
     let themeList = getDirectories(themeFolder)
     if (themeList.length === 0) {
         const actions = ['Download Themes']
-        vscode.window.showInformationMessage('No themes available in themes folder', ...actions).then((value: string) => {
+        vscode.window.showInformationMessage('No themes available in themes folder', ...actions).then((value: any) => {
             if (value === 'Download Themes') {
                 downloadTheme()
             }
@@ -191,7 +202,7 @@ const startServer = () => {
         startCmd = spawn('hugo', [
             'server',
             '--disableFastRender', `--theme=${defaultTheme}`,
-            `-s="${vscode.workspace.rootPath}"`,
+            `-s="${getRootPath()}"`,
             '--buildDrafts',
             '--watch',
             '--port=9081'],
