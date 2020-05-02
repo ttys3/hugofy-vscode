@@ -1,15 +1,15 @@
 'use strict'
-Object.defineProperty(exports, "__esModule", { value: true })
+// Object.defineProperty(exports, "__esModule", { value: true })
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require("vscode")
-const getThemesList_1 = require("./getThemesList")
-const spawn = require('child_process').spawn
-const path = require('path')
-const fs = require('fs')
-const opn = require('open')
-const os = require('os')
-const slug = require('limax')
+import * as vscode from 'vscode'
+import * as themeUtils from './getThemesList'
+import { spawn } from 'child_process'
+import * as path from 'path'
+import * as fs from 'fs'
+import * as opn from 'open'
+import * as os from 'os'
+import slug = require('limax')
 
 const getDirectories = (p: string) => fs.readdirSync(p).filter((f: string) => fs.statSync(p + '/' + f).isDirectory())
 
@@ -66,11 +66,11 @@ const build = () => {
     })
 }
 const downloadTheme = () => {
-    getThemesList_1.getThemesList().then((themeList: any) => {
+    themeUtils.getThemesList().then((themeList: any) => {
         const themeNames = themeList.map((themeItem: any) => themeItem.name)
         vscode.window.showQuickPick(themeNames).then((selection: any) => {
             const themeData = themeList.find((themeItem: any) => themeItem.name === selection)
-            getThemesList_1.getThemeGitURL(themeData).then((gitURL: string) => {
+            themeUtils.getThemeGitURL(themeData).then((gitURL: string) => {
                 const themePath = path.join(vscode.workspace.rootPath, 'themes', themeData.name)
                 const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
                 downloadThemeCmd.stdout.on('data', (data: any) => {
@@ -96,6 +96,10 @@ const downloadTheme = () => {
 const createHugoPost = function (postPath: string, newPostFilePath: string) {
     if (fs.existsSync(newPostFilePath)) {
         vscode.window.showErrorMessage(`Error: post already exists!`, newPostFilePath)
+        return
+    }
+    if (fs.existsSync(path.join(path.dirname(path.dirname(newPostFilePath)), 'index.md'))) {
+        vscode.window.showErrorMessage('Leaf bundle does NOT allow nesting of more bundles under it!')
         return
     }
     // console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
@@ -128,8 +132,8 @@ const newPost = (args: any[]) => {
             return
         }
         const filePath = path.normalize(path.dirname(filename))
-        const fileBasename = slug(path.basename(filename), { tone: false, custom: {'.': '.'}})
-        const normalizedPath = filePath.split('/').map( (dirname: string) => slug(dirname, { tone: false}))
+        const fileBasename = slug(path.basename(filename), { tone: false, custom: { '.': '.' } })
+        const normalizedPath = filePath.split('/').map((dirname: string) => slug(dirname, { tone: false }))
         // normalize filename
         filename = path.join(...normalizedPath, fileBasename)
         console.log('normalize filename: %s', filename)
@@ -180,7 +184,14 @@ const startServer = () => {
     }
     const defaultTheme = getDefaultTheme()
     if (defaultTheme) {
-        startCmd = spawn('hugo', ['server', '--disableFastRender', `--theme=${defaultTheme}`, `-s="${vscode.workspace.rootPath}"`, '--buildDrafts', '--watch', '--port=9081'], { shell: true })
+        startCmd = spawn('hugo', [
+            'server',
+            '--disableFastRender', `--theme=${defaultTheme}`,
+            `-s="${vscode.workspace.rootPath}"`,
+            '--buildDrafts',
+            '--watch',
+            '--port=9081'],
+            { shell: true })
     }
     else {
         vscode.window.showInformationMessage('Default theme not set. Please set one')

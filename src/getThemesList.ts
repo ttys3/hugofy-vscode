@@ -1,5 +1,4 @@
-const https = require('https')
-
+import * as https from 'https'
 
 export const getThemesList = (): Promise<Array<any>> => {
     const options = {
@@ -39,6 +38,7 @@ export const getThemesList = (): Promise<Array<any>> => {
         })
     })
 }
+
 export const getThemeGitURL = (themedata: any) => {
     console.log(themedata)
     const options = {
@@ -50,7 +50,7 @@ export const getThemeGitURL = (themedata: any) => {
             'User-Agent': 'akmittal',
         }
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         https.get(options, (res: any) => {
             let data = ''
             res.on('data', (chunk: any) => data += chunk)
