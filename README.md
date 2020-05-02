@@ -40,6 +40,21 @@ Once the server has been started you can view the output by directing your brows
 
 ## Extension Settings
 
+## How to contribute
+
+`eamodio.tsl-problem-matcher` extension provides `$ts-webpack`, you need install it:
+
+```bash
+: `ext install eamodio.tsl-problem-matcher`
+```
+
+```bash
+git clone https://github.com/ttys3/hugofy-vscode.git
+cd ./hugofy-vscode
+code .
+# press F5 start
+```
+
 ## Known Issues
 
 ## Release Notes

@@ -4,6 +4,11 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.1.6
+
+- refactor: refine console log
+- docs: update development document
+
 ## 0.1.5
 
 - use [transliteration](https://www.npmjs.com/package/transliteration) instead of limax
@@ -15,7 +20,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.1.4
 
 - chore: fixup getThemesList.ts line ending (CRLF to LF)
-- chore: updated CHANGELOG.md and README.md
+- docs: updated CHANGELOG.md and README.md
 
 ## 0.1.3
 
@@ -23,7 +28,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## 0.1.2
 
-- chore: updated CHANGELOG.md and README.md
+- docs: updated CHANGELOG.md and README.md
 
 ## 0.1.1
 

@@ -1,5 +1,6 @@
 // See https://go.microsoft.com/fwlink/?LinkId=733558
 // for the documentation about the tasks.json format
+// `$ts-webpack` need: `ext install eamodio.tsl-problem-matcher`
 {
 	"version": "2.0.0",
 	"tasks": [

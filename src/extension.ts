@@ -34,13 +34,14 @@ const newSite = () => {
     if (getRootPath()) {
         const newSiteCmd = spawn('hugo', ['new', 'site', `"${getRootPath()}"`], { shell: true })
         newSiteCmd.stdout.on('data', (data: any) => {
-            console.log(`stdout: ${data}`)
+            console.info(`hugo new site stdout: ${data}`)
         })
         newSiteCmd.stderr.on('data', (data: any) => {
-            console.log(`stderr: ${data}`)
+            console.error(`hugo new site stderr: ${data}`)
         })
         newSiteCmd.on('close', (code: number) => {
             if (code !== 0) {
+                console.error(`hugo new site err code: ${code}`)
                 vscode.window.showErrorMessage('Error getting hugo version, Make sure hugo is available in path.')
             }
             else {
@@ -52,16 +53,16 @@ const newSite = () => {
 const build = () => {
     const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${getRootPath()}"`], { shell: true })
     buildCmd.stdout.on('data', (data: any) => {
-        console.log(`std ${data}`)
+        console.info(`hugo build out: ${data}`)
         vscode.window.showInformationMessage(data.toString())
     })
     buildCmd.stderr.on('data', (data: any) => {
-        console.log(`stderr ${data}`)
+        console.error(`hugo build stderr ${data}`)
         vscode.window.showErrorMessage(data.toString())
     })
     buildCmd.on('close', (code: number) => {
-        console.log(`code ${code}`)
         if (code !== 0) {
+            console.error(`hugo build err code: ${code}`)
             vscode.window.showErrorMessage('Error getting hugo version, Make sure hugo is available in path.')
         }
     })
@@ -86,10 +87,10 @@ const downloadTheme = () => {
                 const themePath = path.join(getRootPath(), 'themes', themeData.name)
                 const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
                 downloadThemeCmd.stdout.on('data', (data: any) => {
-                    console.log(`stdout: ${data}`)
+                    console.info(`hugofy git clone stdout: ${data}`)
                 })
                 downloadThemeCmd.stderr.on('data', (data: any) => {
-                    console.log(`stderr ${data}`)
+                    console.error(`stderr ${data}`)
                     //vscode.window.showInformationMessage(`Error downloading theme. Make sure git is installed.`)
                 })
                 downloadThemeCmd.on('close', (code: number) => {
@@ -120,7 +121,7 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
         vscode.window.showInformationMessage(data)
     })
     newPostCmd.stderr.on('data', (data: any) => {
-        console.log(`stderr: ${data}`)
+        console.error(`stderr: ${data}`)
         vscode.window.showInformationMessage(`Error creating new post.`)
     })
     newPostCmd.on('close', (code: number) => {
@@ -129,7 +130,7 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
             vscode.workspace.openTextDocument(uripath).then((document: any) => {
                 vscode.window.showTextDocument(document)
             }, (err: any) => {
-                console.log(err)
+                console.error(err)
             })
         }
         else {
@@ -148,7 +149,7 @@ const newPost = (args: any[]) => {
         const normalizedPath = filePath.split('/').map((dirname: string) => slugify(dirname, slugifyConf))
         // normalize filename
         filename = path.join(...normalizedPath, fileBasename)
-        console.log('normalize filename: %s', filename)
+        // console.log('normalize filename: %s', filename)
         // if calls come from right menu click
         if (args != undefined && 'path' in args) {
             // create index.md fast under current context directory
@@ -218,15 +219,16 @@ const startServer = () => {
         if (data.indexOf('Press Ctrl+C to stop') > -1) {
             opn('http://localhost:9081')
             vscode.window.showInformationMessage('hugo server started successfully.')
+        } else {
+            console.info(`hugo server start stdout: ${data}`)
         }
-        console.log(`stdout: ${data}`)
     })
     startCmd.stderr.on('data', (data: any) => {
-        console.log(data.toString())
-        vscode.window.showErrorMessage(`Error running server`)
+        console.error(data.toString())
+        vscode.window.showErrorMessage(`hugo server start failed`)
     })
     startCmd.on('close', (code: number) => {
-        console.log('Command close, code = ', code)
+        code !== 0 && console.error('hugo server close err, code = ', code)
     })
 }
 const stopServer = () => {
@@ -240,9 +242,8 @@ const stopServer = () => {
         // reset startCmd to false value
         startCmd = false
         vscode.window.showInformationMessage('hugo server stopped successfully.')
-    }
-    else {
-        console.log('No process started')
+    } else {
+        console.error('hugo server stop: no process started')
         vscode.window.showInformationMessage('No hugo server started')
     }
 }
