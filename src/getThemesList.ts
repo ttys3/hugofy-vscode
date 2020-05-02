@@ -39,7 +39,7 @@ export const getThemesList = (): Promise<Array<any>> => {
     })
 }
 
-export const getThemeGitURL = (themedata: any) => {
+export const getThemeGitURL = (themedata: any): Promise<string> => {
     console.log(themedata)
     const options = {
         hostname: 'api.github.com',
@@ -60,6 +60,7 @@ export const getThemeGitURL = (themedata: any) => {
                     let items = parsedData
                     resolve(items.submodule_git_url)
                 } catch (e) {
+                    console.error(e)
                     reject(e)
                 }
             })
