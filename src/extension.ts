@@ -151,6 +151,10 @@ const newPost = (args: any[]) => {
             }
             createHugoPost(postPath, newPostPath)
         } else {
+            if (filename === 'index.md') {
+                vscode.window.showErrorMessage(`page bundle should has its own sub-directory!`)
+                return
+            }
             const newPostPath = path.join(vscode.workspace.rootPath, 'content', 'post', filename)
             const postPath = 'post' + path.sep + filename
             createHugoPost(postPath, newPostPath)
