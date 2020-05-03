@@ -7,7 +7,7 @@ import * as themeUtils from './getThemesList'
 import { spawn } from 'child_process'
 import * as path from 'path'
 import * as fs from 'fs'
-import * as opn from 'open'
+import * as open from 'open'
 import * as os from 'os'
 import { slugify } from 'transliteration'
 const slugifyConf = { ignore: ['/'], trim: true, lowercase: true}
@@ -197,10 +197,13 @@ const setTheme = () => {
         })
     }
 }
+
+const openLocalHugoBlog = () => open(`http://localhost:9081/?_t=${Date.now()}`)
+
 const startServer = () => {
     if (startCmd) {
         vscode.window.showInformationMessage('hugo server already started, open URL.')
-        opn('http://localhost:9081')
+        openLocalHugoBlog()
         return
     }
     const defaultTheme = getDefaultTheme()
@@ -220,7 +223,7 @@ const startServer = () => {
     }
     startCmd.stdout.on('data', (data: any) => {
         if (data.indexOf('Press Ctrl+C to stop') > -1) {
-            opn('http://localhost:9081')
+            openLocalHugoBlog()
             vscode.window.showInformationMessage('hugo server started successfully.')
         } else {
             console.info(`hugo server start stdout: ${data}`)
