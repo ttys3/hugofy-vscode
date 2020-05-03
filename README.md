@@ -74,6 +74,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.6
+
+- refactor: optimized download theme feature
+
 ## 0.2.5
 
 - fix: Windows path separator

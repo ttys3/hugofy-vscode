@@ -1,10 +1,12 @@
-import * as vscode from 'vscode'
+import { Uri } from 'vscode'
 import { https } from 'follow-redirects'
+import { URL } from 'url'
 
 export class HugoTheme {
     constructor(
         public name: string,
-        public url: string) { }
+        public apiURL: string,
+        public gitURL: string) { }
 }
 
 const normalizeThemeDirName = (themeRepoDir: string): string => {
@@ -55,7 +57,7 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
                                 item.name.substring(0, 1) !== '_' &&
                                 item.name !== 'LICENSE' &&
                                 item.name !== 'README.md')
-                        )).map((item: any) => new HugoTheme(normalizeThemeDirName(item.name), item.url))
+                        )).map((item: any) => new HugoTheme(normalizeThemeDirName(item.name), item.url, extractGitURL(item.html_url)))
                     // vscode.window.showInformationMessage('done fetch theme list.')
                     console.info('hugofy: done fetch theme list.')
                     resolve(items)
@@ -68,18 +70,31 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
     })
 }
 
-export const getThemeGitURL = (themedata: any): Promise<string> => {
-    if (themedata == undefined) {
-        console.error("hugofy: getThemeGitURL(): themedata can not be undefined")
-        return new Promise((resolve, reject) => {
-            reject(new Error("hugofy: getThemeGitURL(): abort due to themedata undefined"))
-        })
+// get git URL from html_url like `https://github.com/marketempower/axiom/tree/34156c0530092c3cef71bfeaa133c19673bb58b1"`
+const extractGitURL = (html_url: string | null): string => {
+    if (html_url === null ) {
+        return ''
     }
+    
+    const u = new URL(html_url)
+    const pathArr = u.pathname.split('/')
+    if (pathArr.length < 3) {
+        return ''
+    }
+    // console.log('getThemeGitURL: %s, pathArr: %o', html_url, pathArr)
+    const repoUser = pathArr[1]
+    const repoName = pathArr[2]
+    return `${u.origin}/${repoUser}/${repoName}.git`
+}
+
+export const getThemeGitURL = (api_url: string): Promise<string> => {
+    // for non-github submodule, we can not get it from extractGitURL, because html_url is null
+    const u = new URL(api_url)
     const options = {
-        hostname: 'api.github.com',
+        hostname: u.hostname,
         port: 443,
         method: 'GET',
-        path: themedata.url.slice(22),
+        path: u.pathname,
         headers: {
             'User-Agent': 'ttys3/hugofy-vscode',
         }

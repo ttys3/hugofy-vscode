@@ -2,6 +2,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
+import { Uri, QuickPickItem } from 'vscode'
 import * as themeUtils from './getThemesList'
 import { spawn } from 'child_process'
 import * as path from 'path'
@@ -11,6 +12,7 @@ import * as os from 'os'
 const vscache = require('vscode-cache')
 
 import { slugify } from 'transliteration'
+import { URL } from 'url'
 const slugifyConf = { ignore: [path.sep], trim: true, lowercase: true }
 const themelistCacheKey = 'ttys3.hugoy.themeList'
 const curThemeCacheKey = 'ttys3.hugoy.themeCurrent'
@@ -19,6 +21,16 @@ const getDirectories = (p: string) => fs.readdirSync(p).filter((f: string) => fs
 
 let extCache: any
 let startCmd: any = false
+
+class themeItem implements QuickPickItem {
+    label: string;
+    description: string;
+
+    constructor(public name: string, public gitURL: Uri, public apiURL: Uri) {
+        this.label = name
+        this.description = gitURL.toString()
+    }
+}
 
 const getVersion = () => {
     const version = spawn('hugo', ['version'], { shell: true })
@@ -87,32 +99,45 @@ const getRootPath = (): string => {
     return vscode.workspace.workspaceFolders[0].uri.path
 }
 
+const gitCloneTheme = (themeData: themeItem) => {
+    const themePath = path.join(getRootPath(), 'themes', themeData.name)
+    const downloadThemeCmd = spawn('git', ['clone', themeData.gitURL.toString(), `"${themePath}"`], { shell: true })
+    downloadThemeCmd.stdout.on('data', (data: any) => {
+        console.info(`hugofy git clone ${themeData.gitURL.toString()} stdout: ${data.toString()}`)
+    })
+    downloadThemeCmd.stderr.on('data', (data: any) => {
+        console.log(`hugofy git clone ${themeData.gitURL.toString()} stderr ${data.toString()}`)
+        //vscode.window.showInformationMessage(`Error downloading theme. Make sure git is installed.`)
+    })
+    downloadThemeCmd.on('close', (code: number) => {
+        if (code === 0) {
+            vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
+        } else {
+            vscode.window.showErrorMessage(`Error downloading theme. Exit code ${code}`)
+        }
+    })
+}
+
 const doDownloadTheme = (themeList: any) => {
-    const themeNames = themeList.map((themeItem: any) => themeItem.name)
-    vscode.window.showQuickPick(themeNames).then((selection: any) => {
+    const themeItems = themeList.map((theme: any) => new themeItem(theme.name, theme.gitURL, theme.apiURL))
+    vscode.window.showQuickPick(themeItems).then((selection: any) => {
         if (selection === undefined) {
             return
         }
-        const themeData = themeList.find((themeItem: any) => themeItem.name === selection)
-        themeUtils.getThemeGitURL(themeData).then((gitURL: string) => {
-            const themePath = path.join(getRootPath(), 'themes', themeData.name)
+        console.log('selection: %o', selection)
+        const themeData = themeList.find((theme: any) => theme.apiURL === selection.apiURL)
+        if (themeData) {
             vscode.window.showInformationMessage(`begin download theme ${themeData.name}`)
-            const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
-            downloadThemeCmd.stdout.on('data', (data: any) => {
-                console.info(`hugofy git clone stdout: ${data}`)
-            })
-            downloadThemeCmd.stderr.on('data', (data: any) => {
-                console.log(`hugofy git clone stderr ${data}`)
-                //vscode.window.showInformationMessage(`Error downloading theme. Make sure git is installed.`)
-            })
-            downloadThemeCmd.on('close', (code: number) => {
-                if (code === 0) {
-                    vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
-                } else {
-                    vscode.window.showErrorMessage(`Error downloading theme. Exit code ${code}`)
-                }
-            })
-        })
+            if (themeData.gitURL.toString() !== '') {
+                gitCloneTheme(themeData)
+            } else {
+                console.log(`hugofy: download theme ${themeData.name}, non-github repo, try fetch git URL via API`)
+                themeUtils.getThemeGitURL(themeData.apiURL).then((gitURL: string) => {
+                    themeData.gitURL = new URL(gitURL)
+                    gitCloneTheme(themeData)
+                })
+            }
+        }
     })
 }
 
@@ -305,12 +330,12 @@ const checkHugoInstalled = () => {
     version.on('close', (code: number) => {
         if (code !== 0) {
             vscode.window.showErrorMessage('hugo executable not found, please ensure hugo is available in path.',
-            'Check the guide on how to install Hugo').then((action: string | undefined) => {
-                if (action === undefined) {
-                    return
-                }
-                open('https://gohugo.io/getting-started/installing/')
-            })
+                'Check the guide on how to install Hugo').then((action: string | undefined) => {
+                    if (action === undefined) {
+                        return
+                    }
+                    open('https://gohugo.io/getting-started/installing/')
+                })
         }
     })
 }
