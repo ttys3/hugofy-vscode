@@ -8,11 +8,16 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as open from 'open'
 import * as os from 'os'
+const vscache = require('vscode-cache')
+
 import { slugify } from 'transliteration'
-const slugifyConf = { ignore: ['/'], trim: true, lowercase: true}
+const slugifyConf = { ignore: ['/'], trim: true, lowercase: true }
+const themelistCacheKey = 'ttys3.hugoy.themeList'
+const curThemeCacheKey = 'ttys3.hugoy.themeCurrent'
 
 const getDirectories = (p: string) => fs.readdirSync(p).filter((f: string) => fs.statSync(p + '/' + f).isDirectory())
 
+let extCache: any
 let startCmd: any = false
 
 const getVersion = () => {
@@ -77,32 +82,42 @@ const getRootPath = (): string => {
     return vscode.workspace.workspaceFolders[0].uri.path
 }
 
-const downloadTheme = () => {
-    themeUtils.getThemesList().then((themeList: any) => {
-        const themeNames = themeList.map((themeItem: any) => themeItem.name)
-        vscode.window.showQuickPick(themeNames).then((selection: any) => {
-            const themeData = themeList.find((themeItem: any) => themeItem.name === selection)
-            themeUtils.getThemeGitURL(themeData).then((gitURL: string) => {
-                const themePath = path.join(getRootPath(), 'themes', themeData.name)
-                vscode.window.showInformationMessage(`begin download theme ${themeData.name}`)
-                const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
-                downloadThemeCmd.stdout.on('data', (data: any) => {
-                    console.info(`hugofy git clone stdout: ${data}`)
-                })
-                downloadThemeCmd.stderr.on('data', (data: any) => {
-                    console.log(`hugofy git clone stderr ${data}`)
-                    //vscode.window.showInformationMessage(`Error downloading theme. Make sure git is installed.`)
-                })
-                downloadThemeCmd.on('close', (code: number) => {
-                    if (code === 0) {
-                        vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
-                    } else {
-                        vscode.window.showErrorMessage(`Error downloading theme. Exit code ${code}`)
-                    }
-                })
+const doDownloadTheme = (themeList: any) => {
+    const themeNames = themeList.map((themeItem: any) => themeItem.name)
+    vscode.window.showQuickPick(themeNames).then((selection: any) => {
+        if (selection === undefined) {
+            return
+        }
+        const themeData = themeList.find((themeItem: any) => themeItem.name === selection)
+        themeUtils.getThemeGitURL(themeData).then((gitURL: string) => {
+            const themePath = path.join(getRootPath(), 'themes', themeData.name)
+            vscode.window.showInformationMessage(`begin download theme ${themeData.name}`)
+            const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
+            downloadThemeCmd.stdout.on('data', (data: any) => {
+                console.info(`hugofy git clone stdout: ${data}`)
+            })
+            downloadThemeCmd.stderr.on('data', (data: any) => {
+                console.log(`hugofy git clone stderr ${data}`)
+                //vscode.window.showInformationMessage(`Error downloading theme. Make sure git is installed.`)
+            })
+            downloadThemeCmd.on('close', (code: number) => {
+                if (code === 0) {
+                    vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
+                } else {
+                    vscode.window.showErrorMessage(`Error downloading theme. Exit code ${code}`)
+                }
             })
         })
     })
+}
+
+const downloadTheme = () => {
+    const themelist = extCache.get(themelistCacheKey)
+    if (themelist) {
+        doDownloadTheme(themelist)
+    } else {
+        themeUtils.getThemesList().then(doDownloadTheme)
+    }
 }
 
 const createHugoPost = function (postPath: string, newPostFilePath: string) {
@@ -114,13 +129,13 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
         vscode.window.showErrorMessage('Leaf bundle does NOT allow nesting of more bundles under it!')
         return
     }
-    // console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
+    // console.info('hugofy: hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
     const newPostCmd = spawn('hugo', ['new', postPath, `-s="${getRootPath()}"`, `--theme="${getDefaultTheme()}"`], { shell: true })
     newPostCmd.stdout.on('data', (data: any) => {
         vscode.window.showInformationMessage(data.toString())
     })
     newPostCmd.stderr.on('data', (data: any) => {
-        console.error(`stderr: ${data}`)
+        console.error(`hugofy: new post stderr: ${data}`)
         vscode.window.showInformationMessage(`Error creating new post.`)
     })
     newPostCmd.on('close', (code: number) => {
@@ -154,7 +169,7 @@ const newPost = (args: any[]) => {
         const normalizedPath = filePath.split('/').map((dirname: string) => slugify(dirname, slugifyConf))
         // normalize filename
         filename = path.join(...normalizedPath, fileBasename)
-        // console.log('normalize filename: %s', filename)
+        // console.log('hugofy: normalize filename: %s', filename)
         // if calls come from right menu click
         if (args != undefined && 'path' in args) {
             // create index.md fast under current context directory
@@ -193,7 +208,15 @@ const setTheme = () => {
     } else {
         let config = vscode.workspace.getConfiguration('launch')
         vscode.window.showQuickPick(themeList).then((selection: any) => {
+            if (selection === undefined) {
+                return
+            }
             config.update('defaultTheme', selection)
+            extCache.set(curThemeCacheKey, selection)
+            if (startCmd) {
+                stopServer()
+                startServer()
+            }
         })
     }
 }
@@ -207,6 +230,7 @@ const startServer = () => {
         return
     }
     const defaultTheme = getDefaultTheme()
+    // console.log('get current theme: %s', defaultTheme)
     if (defaultTheme) {
         startCmd = spawn('hugo', [
             'server',
@@ -226,18 +250,18 @@ const startServer = () => {
             openLocalHugoBlog()
             vscode.window.showInformationMessage('hugo server started successfully.')
         } else {
-            console.info(`hugo server start stdout: ${data}`)
+            console.info(`hugofy: hugo server start stdout: ${data}`)
         }
     })
     startCmd.stderr.on('data', (data: any) => {
-        console.error(data.toString())
+        console.error(`hugofy: start server stderr: ${data.toString()}`)
         vscode.window.showErrorMessage(`hugo server start failed`)
     })
     startCmd.on('close', (code: number) => {
         if (code !== 0) {
             // reset startCmd to false value
             startCmd = false
-            console.error('hugo server close err, code = ', code)
+            console.error('hugofy: hugo server close err, code = ', code)
         }
     })
 }
@@ -253,12 +277,22 @@ const stopServer = () => {
         startCmd = false
         vscode.window.showInformationMessage('hugo server stopped successfully.')
     } else {
-        console.error('hugo server stop: no process started')
+        console.error('hugofy: hugo server stop: no process started')
         vscode.window.showErrorMessage('No hugo server started')
     }
 }
 
-function activate(context: any) {
+const getDefaultTheme = () => {
+    if (extCache.has(curThemeCacheKey)) {
+        return extCache.get(curThemeCacheKey)
+    }
+    const config = vscode.workspace.getConfiguration('launch')
+    return config.get('defaultTheme')
+}
+
+// Extension activation method
+const activate = (context: any) => {
+    // init commands
     context.subscriptions.push(
         vscode.commands.registerCommand('hugofy.getVersion', getVersion),
         vscode.commands.registerCommand('hugofy.newSite', newSite),
@@ -269,15 +303,23 @@ function activate(context: any) {
         vscode.commands.registerCommand('hugofy.startServer', startServer),
         vscode.commands.registerCommand('hugofy.stopServer', stopServer)
     )
-}
+
+    // Instantiate the cache
+    extCache = new vscache(context);
+    themeUtils.getThemesList().then((themeList: any) => {
+        // Save an item to the cache by specifying a key and value
+        extCache.put(themelistCacheKey, themeList)
+            .then(() => {
+                // console.log(extCache.has(themelistCacheKey)) // returns true
+                // const themelist = extCache.get(themelistCacheKey)
+                // console.log(themelist)
+            })
+    })
+};
 
 exports.activate = activate
-function deactivate() {
-    stopServer()
-}
+
+const deactivate = () => stopServer()
+
 exports.deactivate = deactivate
-function getDefaultTheme() {
-    let config = vscode.workspace.getConfiguration('launch')
-    return config.get('defaultTheme')
-}
 //# sourceMappingURL=extension.js.map

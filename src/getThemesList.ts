@@ -40,7 +40,8 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
         }
     }
     return new Promise((resolve, reject) => {
-        vscode.window.showInformationMessage('begin fetch theme list ...')
+        // vscode.window.showInformationMessage('begin fetch theme list ...')
+        console.info('hugofy: begin fetch theme list ...')
         https.get(options, (res: any) => {
             let data = ''
             res.on('data', (chunk: any) => data += chunk)
@@ -55,7 +56,8 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
                                 item.name !== 'LICENSE' &&
                                 item.name !== 'README.md')
                         )).map((item: any) => new HugoTheme(normalizeThemeDirName(item.name), item.url))
-                    vscode.window.showInformationMessage('done fetch theme list.')
+                    // vscode.window.showInformationMessage('done fetch theme list.')
+                    console.info('hugofy: done fetch theme list.')
                     resolve(items)
                 } catch (e) {
                     reject(e)

@@ -57,7 +57,7 @@
 			},
 			{
 				"command": "hugofy.downloadTheme",
-				"title": "Hugofy: Download Themes"
+				"title": "Hugofy: Download Theme"
 			},
 			{
 				"command": "hugofy.newPost",
@@ -109,6 +109,7 @@
 		"@types/follow-redirects": "^1.8.0",
 		"follow-redirects": "^1.11.0",
 		"open": "^7.0.3",
-		"transliteration": "^2.1.8"
+		"transliteration": "^2.1.8",
+		"vscode-cache": "^0.3.0"
 	}
 }
