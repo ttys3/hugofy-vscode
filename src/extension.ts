@@ -111,9 +111,26 @@ const gitCloneTheme = (themeData: themeItem) => {
     })
     downloadThemeCmd.on('close', (code: number) => {
         if (code === 0) {
-            vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
+            vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`,
+            ...[`use ${themeData.name}`, 'start server']).then((action: string | undefined) => {
+                if (action === undefined) {
+                    return
+                }
+                // console.log('action: %s', action)
+                if (action === `use ${themeData.name}`) {
+                    doSetTheme(themeData.name)
+                } else {
+                    startServer()
+                }
+            })
         } else {
-            vscode.window.showErrorMessage(`Error downloading theme ${themeData.name} from ${themeData.gitURL.toString()}, Exit code ${code}`)
+            vscode.window.showErrorMessage(`Error downloading theme ${themeData.name} from ${themeData.gitURL.toString()}, Exit code ${code}`,
+            'try again').then((action: string | undefined) => {
+                if (action === undefined) {
+                    return
+                }
+                gitCloneTheme(themeData)
+            })
         }
     })
 }
@@ -124,7 +141,7 @@ const doDownloadTheme = (themeList: any) => {
         if (selection === undefined) {
             return
         }
-        console.log('selection: %o', selection)
+        // console.log('doDownloadTheme selection: %o', selection)
         const themeData = themeList.find((theme: any) => theme.apiURL === selection.apiURL)
         if (themeData) {
             vscode.window.showInformationMessage(`begin download theme ${themeData.name}`)
@@ -225,6 +242,16 @@ const newPost = (args: any[]) => {
     })
 }
 
+const doSetTheme = (theme: string) => {
+    const config = vscode.workspace.getConfiguration('launch')
+    config.update('defaultTheme', theme)
+    extCache.set(curThemeCacheKey, theme)
+    if (startCmd) {
+        stopServer()
+        startServer()
+    }
+}
+
 const setTheme = () => {
     const themeFolder = path.join(getRootPath(), 'themes')
     let themeList = getDirectories(themeFolder)
@@ -236,17 +263,12 @@ const setTheme = () => {
             }
         })
     } else {
-        let config = vscode.workspace.getConfiguration('launch')
+        
         vscode.window.showQuickPick(themeList).then((selection: any) => {
             if (selection === undefined) {
                 return
             }
-            config.update('defaultTheme', selection)
-            extCache.set(curThemeCacheKey, selection)
-            if (startCmd) {
-                stopServer()
-                startServer()
-            }
+            doSetTheme(selection)
         })
     }
 }

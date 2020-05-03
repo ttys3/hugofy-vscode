@@ -74,6 +74,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.7
+
+- refactor: add actions when theme download failed or succeed
+
 ## 0.2.6
 
 - refactor: optimized download theme feature
