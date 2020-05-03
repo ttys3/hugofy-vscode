@@ -4,6 +4,11 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.2.4
+
+- refactor: check hugo in PATH or not, if not notify the user
+- fix: show detailed build error
+
 ## 0.2.3
 
 - refactor: show hugo server start error details
