@@ -113,7 +113,7 @@ const gitCloneTheme = (themeData: themeItem) => {
         if (code === 0) {
             vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`)
         } else {
-            vscode.window.showErrorMessage(`Error downloading theme. Exit code ${code}`)
+            vscode.window.showErrorMessage(`Error downloading theme ${themeData.name} from ${themeData.gitURL.toString()}, Exit code ${code}`)
         }
     })
 }
