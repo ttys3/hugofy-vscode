@@ -250,12 +250,16 @@ const startServer = () => {
             openLocalHugoBlog()
             vscode.window.showInformationMessage('hugo server started successfully.')
         } else {
-            console.info(`hugofy: hugo server start stdout: ${data}`)
+            const out = data.toString()
+            if (/error/i.test(out)) {
+                console.error(`hugofy: hugo server start stdout: ${data.toString()}`)
+                vscode.window.showErrorMessage(`${data.toString()}`)
+            }
         }
     })
     startCmd.stderr.on('data', (data: any) => {
         console.error(`hugofy: start server stderr: ${data.toString()}`)
-        vscode.window.showErrorMessage(`hugo server start failed`)
+        vscode.window.showErrorMessage(`hugo server start failed: ${data.toString()}`)
     })
     startCmd.on('close', (code: number) => {
         if (code !== 0) {
