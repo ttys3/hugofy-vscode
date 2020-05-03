@@ -1,4 +1,4 @@
-
+import * as vscode from 'vscode'
 import { https } from 'follow-redirects'
 
 export class HugoTheme {
@@ -9,13 +9,21 @@ export class HugoTheme {
 
 const normalizeThemeDirName = (themeRepoDir: string): string => {
     themeRepoDir = themeRepoDir.toLowerCase()
-    // hugo-xxx-theme
     if (/^hugo-[\w_-]+-theme$/.test(themeRepoDir)) {
+        // hugo-xxx-theme
         return themeRepoDir.replace(/^hugo-/, '').replace(/-theme$/, '')
     } else if (/^hugo-theme-[\w_-]+$/.test(themeRepoDir)) {
+        // hugo-theme-xxx
         return themeRepoDir.replace(/^hugo-theme-/, '')
-    } else if (/hugo-[\w_-]+$/.test(themeRepoDir)) {
+    }  else if (/^[\w_-]+-hugo-theme$/.test(themeRepoDir)) {
+        // xxx-hugo-theme
+        return themeRepoDir.replace(/-hugo-theme$/, '')
+    } else if (/^hugo-[\w_-]+$/.test(themeRepoDir)) {
+        // hugo-xxx
         return themeRepoDir.replace(/^hugo-/, '')
+    } else if (/^[\w_-]+-hugo$/.test(themeRepoDir)) {
+        // xxx-hugo
+        return themeRepoDir.replace(/-hugo$/, '')
     } else {
         return themeRepoDir
     }
@@ -25,13 +33,14 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
     const options = {
         hostname: 'api.github.com',
         port: 443,
-        path: '/repos/spf13/hugoThemes/contents',
+        path: '/repos/gohugoio/hugoThemes/contents',
         method: 'GET',
         headers: {
-            'User-Agent': 'akmittal',
+            'User-Agent': 'ttys3/hugofy-vscode',
         }
     }
     return new Promise((resolve, reject) => {
+        vscode.window.showInformationMessage('begin fetch theme list ...')
         https.get(options, (res: any) => {
             let data = ''
             res.on('data', (chunk: any) => data += chunk)
@@ -46,6 +55,7 @@ export const getThemesList = (): Promise<Array<HugoTheme>> => {
                                 item.name !== 'LICENSE' &&
                                 item.name !== 'README.md')
                         )).map((item: any) => new HugoTheme(normalizeThemeDirName(item.name), item.url))
+                    vscode.window.showInformationMessage('done fetch theme list.')
                     resolve(items)
                 } catch (e) {
                     reject(e)
@@ -69,7 +79,7 @@ export const getThemeGitURL = (themedata: any): Promise<string> => {
         method: 'GET',
         path: themedata.url.slice(22),
         headers: {
-            'User-Agent': 'akmittal',
+            'User-Agent': 'ttys3/hugofy-vscode',
         }
     }
     return new Promise<string>((resolve, reject) => {

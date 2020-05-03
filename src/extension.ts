@@ -1,4 +1,3 @@
-'use strict'
 // Object.defineProperty(exports, "__esModule", { value: true })
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
@@ -85,6 +84,7 @@ const downloadTheme = () => {
             const themeData = themeList.find((themeItem: any) => themeItem.name === selection)
             themeUtils.getThemeGitURL(themeData).then((gitURL: string) => {
                 const themePath = path.join(getRootPath(), 'themes', themeData.name)
+                vscode.window.showInformationMessage(`begin download theme ${themeData.name}`)
                 const downloadThemeCmd = spawn('git', ['clone', gitURL, `"${themePath}"`], { shell: true })
                 downloadThemeCmd.stdout.on('data', (data: any) => {
                     console.info(`hugofy git clone stdout: ${data}`)
@@ -254,7 +254,7 @@ const stopServer = () => {
         vscode.window.showInformationMessage('hugo server stopped successfully.')
     } else {
         console.error('hugo server stop: no process started')
-        vscode.window.showInformationMessage('No hugo server started')
+        vscode.window.showErrorMessage('No hugo server started')
     }
 }
 
