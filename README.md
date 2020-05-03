@@ -76,6 +76,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.1
+
+- refactor: open local hugo blog: prevent browser cache problem
+
 ## 0.2.0
 
 - fix: check theme set or not before newPost(), show detailed error on new site error
