@@ -4,6 +4,10 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.2.2
+
+- refactor: optimized set theme and download theme feature
+
 ## 0.2.1
 
 - refactor: open local hugo blog: prevent browser cache problem

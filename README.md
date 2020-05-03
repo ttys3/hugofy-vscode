@@ -76,6 +76,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.2
+
+- refactor: optimized set theme and download theme feature
+
 ## 0.2.1
 
 - refactor: open local hugo blog: prevent browser cache problem
