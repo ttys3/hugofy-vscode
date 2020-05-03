@@ -76,6 +76,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.0
+
+- fix: check theme set or not before newPost(), show detailed error on new site error
+
 ## 0.1.9
 
 - docs: update README.md

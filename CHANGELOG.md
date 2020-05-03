@@ -4,6 +4,10 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.2.0
+
+- fix: check theme set or not before newPost(), show detailed error on new site error
+
 ## 0.1.9
 
 - docs: update README.md
