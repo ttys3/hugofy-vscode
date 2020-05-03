@@ -59,8 +59,11 @@ const newSite = () => {
 const build = () => {
     const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${getRootPath()}"`, `--theme="${getDefaultTheme()}"`], { shell: true })
     buildCmd.stdout.on('data', (data: any) => {
-        console.info(`hugo build out: ${data}`)
-        vscode.window.showInformationMessage(data.toString())
+        const out = data.toString()
+        if (/error/i.test(out)) {
+            console.info(`hugo build out: ${out}`)
+            vscode.window.showErrorMessage(out)
+        }
     })
     buildCmd.stderr.on('data', (data: any) => {
         console.error(`hugo build stderr ${data}`)
