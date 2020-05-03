@@ -252,8 +252,8 @@ const startServer = () => {
         } else {
             const out = data.toString()
             if (/error/i.test(out)) {
-                console.error(`hugofy: hugo server start stdout: ${data.toString()}`)
-                vscode.window.showErrorMessage(`${data.toString()}`)
+                console.error(`hugofy: hugo server start stdout: ${out}`)
+                vscode.window.showErrorMessage(`${out}`)
             }
         }
     })
