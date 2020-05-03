@@ -76,6 +76,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.3
+
+- refactor: show hugo server start error details
+
 ## 0.2.2
 
 - refactor: optimized set theme and download theme feature
