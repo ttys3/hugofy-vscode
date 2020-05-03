@@ -74,6 +74,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.5
+
+- fix: Windows path separator
+
 ## 0.2.4
 
 - refactor: check hugo in PATH or not, if not notify the user

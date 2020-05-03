@@ -11,11 +11,11 @@ import * as os from 'os'
 const vscache = require('vscode-cache')
 
 import { slugify } from 'transliteration'
-const slugifyConf = { ignore: ['/'], trim: true, lowercase: true }
+const slugifyConf = { ignore: [path.sep], trim: true, lowercase: true }
 const themelistCacheKey = 'ttys3.hugoy.themeList'
 const curThemeCacheKey = 'ttys3.hugoy.themeCurrent'
 
-const getDirectories = (p: string) => fs.readdirSync(p).filter((f: string) => fs.statSync(p + '/' + f).isDirectory())
+const getDirectories = (p: string) => fs.readdirSync(p).filter((f: string) => fs.statSync(p + path.sep + f).isDirectory())
 
 let extCache: any
 let startCmd: any = false
@@ -171,7 +171,7 @@ const newPost = (args: any[]) => {
         }
         const filePath = path.normalize(path.dirname(filename))
         const fileBasename = slugify(path.basename(filename), slugifyConf)
-        const normalizedPath = filePath.split('/').map((dirname: string) => slugify(dirname, slugifyConf))
+        const normalizedPath = filePath.split(path.sep).map((dirname: string) => slugify(dirname, slugifyConf))
         // normalize filename
         filename = path.join(...normalizedPath, fileBasename)
         // console.log('hugofy: normalize filename: %s', filename)
