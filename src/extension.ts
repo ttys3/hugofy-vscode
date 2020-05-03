@@ -38,11 +38,11 @@ const newSite = () => {
         })
         newSiteCmd.stderr.on('data', (data: any) => {
             console.error(`hugo new site stderr: ${data}`)
+            vscode.window.showErrorMessage(`New hugo site err: ${data}`)
         })
         newSiteCmd.on('close', (code: number) => {
             if (code !== 0) {
                 console.error(`hugo new site err code: ${code}`)
-                vscode.window.showErrorMessage('Error getting hugo version, Make sure hugo is available in path.')
             }
             else {
                 vscode.window.showInformationMessage(`Congratulations! Your new Hugo site is created in ${getRootPath()} test`)
@@ -51,7 +51,7 @@ const newSite = () => {
     }
 }
 const build = () => {
-    const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${getRootPath()}"`], { shell: true })
+    const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${getRootPath()}"`, `--theme="${getDefaultTheme()}"`], { shell: true })
     buildCmd.stdout.on('data', (data: any) => {
         console.info(`hugo build out: ${data}`)
         vscode.window.showInformationMessage(data.toString())
@@ -115,7 +115,7 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
         return
     }
     // console.info('hugoContentPath: %s, newPostFilePath: %s, postPath: %s', hugoContentPath, newPostFilePath, postPath)
-    const newPostCmd = spawn('hugo', ['new', postPath, `-s="${getRootPath()}"`], { shell: true })
+    const newPostCmd = spawn('hugo', ['new', postPath, `-s="${getRootPath()}"`, `--theme="${getDefaultTheme()}"`], { shell: true })
     newPostCmd.stdout.on('data', (data: any) => {
         vscode.window.showInformationMessage(data.toString())
     })
@@ -139,6 +139,12 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
 }
 
 const newPost = (args: any[]) => {
+    const defaultTheme = getDefaultTheme()
+    if (defaultTheme == undefined) {
+        vscode.window.showInformationMessage('Default theme not set. Please set one')
+        setTheme()
+        return
+    }
     vscode.window.showInputBox({ placeHolder: 'Enter filename', value: 'index.md' }).then((filename: string | undefined) => {
         if (filename == undefined) {
             return
@@ -184,8 +190,7 @@ const setTheme = () => {
                 downloadTheme()
             }
         })
-    }
-    else {
+    } else {
         let config = vscode.workspace.getConfiguration('launch')
         vscode.window.showQuickPick(themeList).then((selection: any) => {
             config.update('defaultTheme', selection)
@@ -208,8 +213,7 @@ const startServer = () => {
             '--watch',
             '--port=9081'],
             { shell: true })
-    }
-    else {
+    } else {
         vscode.window.showInformationMessage('Default theme not set. Please set one')
         setTheme()
         return
@@ -227,7 +231,11 @@ const startServer = () => {
         vscode.window.showErrorMessage(`hugo server start failed`)
     })
     startCmd.on('close', (code: number) => {
-        code !== 0 && console.error('hugo server close err, code = ', code)
+        if (code !== 0) {
+            // reset startCmd to false value
+            startCmd = false
+            console.error('hugo server close err, code = ', code)
+        }
     })
 }
 const stopServer = () => {
