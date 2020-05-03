@@ -45,9 +45,7 @@ Once the server has been started you can view the output by directing your brows
 
 this extension saved current theme name in `.vscode/launch.json`.
 
-edit `.vscode/launch.json` remve the key `defaultTheme` and re-open vscode
-
-or simply remove `.vscode/launch.json`
+you can set new theme for this extension with the `Hugoy: Set Theme`  command via command pallete (press `Ctrl+Shift+P` to enter)
 
 ## Extension Settings
 
