@@ -34,6 +34,7 @@ const getVersion = () => {
         }
     })
 }
+
 const newSite = () => {
     if (getRootPath()) {
         const newSiteCmd = spawn('hugo', ['new', 'site', `"${getRootPath()}"`], { shell: true })
@@ -54,6 +55,7 @@ const newSite = () => {
         })
     }
 }
+
 const build = () => {
     const buildCmd = spawn('hugo', ['--buildDrafts', `-s="${getRootPath()}"`, `--theme="${getDefaultTheme()}"`], { shell: true })
     buildCmd.stdout.on('data', (data: any) => {
@@ -67,7 +69,7 @@ const build = () => {
     buildCmd.on('close', (code: number) => {
         if (code !== 0) {
             console.error(`hugo build err code: ${code}`)
-            vscode.window.showErrorMessage('Error getting hugo version, Make sure hugo is available in path.')
+            vscode.window.showErrorMessage('hugofy: hugo build failed')
         }
     })
 }
@@ -265,10 +267,11 @@ const startServer = () => {
         if (code !== 0) {
             // reset startCmd to false value
             startCmd = false
-            console.error('hugofy: hugo server close err, code = ', code)
+            console.error('hugofy: hugo server closed unexpectd with err code = ', code)
         }
     })
 }
+
 const stopServer = () => {
     if (startCmd) {
         if (os.platform() == 'win32') {
@@ -294,8 +297,24 @@ const getDefaultTheme = () => {
     return config.get('defaultTheme')
 }
 
+const checkHugoInstalled = () => {
+    const version = spawn('hugo', ['version'], { shell: true })
+    version.on('close', (code: number) => {
+        if (code !== 0) {
+            vscode.window.showErrorMessage('hugo executable not found, please ensure hugo is available in path.',
+            'Check the guide on how to install Hugo').then((action: string | undefined) => {
+                if (action === undefined) {
+                    return
+                }
+                open('https://gohugo.io/getting-started/installing/')
+            })
+        }
+    })
+}
+
 // Extension activation method
 const activate = (context: any) => {
+    checkHugoInstalled()
     // init commands
     context.subscriptions.push(
         vscode.commands.registerCommand('hugofy.getVersion', getVersion),
