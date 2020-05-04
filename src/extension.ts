@@ -113,25 +113,25 @@ const gitCloneTheme = (themeData: themeItem) => {
     downloadThemeCmd.on('close', (code: number) => {
         if (code === 0) {
             vscode.window.showInformationMessage(`successfully downloaded theme ${themeData.name}`,
-            ...[`use ${themeData.name}`, 'start server']).then((action: string | undefined) => {
-                if (action === undefined) {
-                    return
-                }
-                // console.log('action: %s', action)
-                if (action === `use ${themeData.name}`) {
-                    doSetTheme(themeData.name)
-                } else {
-                    startServer()
-                }
-            })
+                ...[`use ${themeData.name}`, 'start server']).then((action: string | undefined) => {
+                    if (action === undefined) {
+                        return
+                    }
+                    // console.log('action: %s', action)
+                    if (action === `use ${themeData.name}`) {
+                        doSetTheme(themeData.name)
+                    } else {
+                        startServer()
+                    }
+                })
         } else {
             vscode.window.showErrorMessage(`Error downloading theme ${themeData.name} from ${themeData.gitURL.toString()}, Exit code ${code}`,
-            'try again').then((action: string | undefined) => {
-                if (action === undefined) {
-                    return
-                }
-                gitCloneTheme(themeData)
-            })
+                'try again').then((action: string | undefined) => {
+                    if (action === undefined) {
+                        return
+                    }
+                    gitCloneTheme(themeData)
+                })
         }
     })
 }
@@ -183,8 +183,8 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
         vscode.window.showInformationMessage(data.toString())
     })
     newPostCmd.stderr.on('data', (data: any) => {
-        console.error(`hugofy: new post stderr: ${data}`)
-        vscode.window.showInformationMessage(`Error creating new post.`)
+        console.error(`hugofy: new post stderr: ${data.toString()}`)
+        vscode.window.showInformationMessage(`${data.toString()}`)
     })
     newPostCmd.on('close', (code: number) => {
         if (code === 0) {
@@ -194,8 +194,7 @@ const createHugoPost = function (postPath: string, newPostFilePath: string) {
             }, (err: any) => {
                 console.error(err)
             })
-        }
-        else {
+        } else {
             vscode.window.showErrorMessage(`Error creating new post.`)
         }
     })
@@ -265,7 +264,6 @@ const setTheme = () => {
             }
         })
     } else {
-        
         vscode.window.showQuickPick(themeList).then((selection: any) => {
             if (selection === undefined) {
                 return
