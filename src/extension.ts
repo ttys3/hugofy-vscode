@@ -96,7 +96,8 @@ const getRootPath = (): string => {
         vscode.window.showErrorMessage('Error: you need open a folder')
         return ''
     }
-    return vscode.workspace.workspaceFolders[0].uri.path
+    // console.log('vscode.workspace.workspaceFolders: %o', vscode.workspace.workspaceFolders)
+    return vscode.workspace.workspaceFolders[0].uri.fsPath
 }
 
 const gitCloneTheme = (themeData: themeItem) => {
@@ -218,14 +219,15 @@ const newPost = (args: any[]) => {
         filename = path.join(...normalizedPath, fileBasename)
         // console.log('hugofy: normalize filename: %s', filename)
         // if calls come from right menu click
-        if (args != undefined && 'path' in args) {
+        if (args != undefined && 'fsPath' in args) {
+            // console.log('newPost() args: %o', args)
             // create index.md fast under current context directory
             const hugoContentPath = path.join(getRootPath(), 'content')
-            const newPostPath = path.join(args['path'], filename)
+            const newPostPath = path.join(args['fsPath'], filename)
             const postPath = newPostPath.substring(hugoContentPath.length)
 
             const postDirPath = path.join(getRootPath(), 'content', 'post')
-            if (postDirPath == args['path'] && filename === 'index.md') {
+            if (postDirPath == args['fsPath'] && filename === 'index.md') {
                 vscode.window.showErrorMessage(`page bundle should has its own sub-directory!`)
                 return
             }
