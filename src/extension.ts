@@ -339,10 +339,14 @@ const stopServer = () => {
     }
 }
 
-const getInitTheme = () => {
+const getInitTheme = (): any => {
     const config = vscode.workspace.getConfiguration('launch')
     const theme = config.get('defaultTheme')
-    extCache.set(curThemeCacheKey, theme)
+    if (theme) {
+        extCache.set(curThemeCacheKey, theme)
+    } else {
+        extCache.set(curThemeCacheKey, '')
+    }
     return theme
 }
 
@@ -369,7 +373,8 @@ const checkHugoInstalled = () => {
 }
 
 const checkThemeExists = () => {
-    const curTheme = getDefaultTheme()
+    const curTheme = getInitTheme()
+    // only check if the configured theme exists (that's to say, only when this is a hugo site project)
     if (curTheme) {
         const themeFolder = path.join(getRootPath(), 'themes', curTheme)
         console.log('check %s', themeFolder)
@@ -410,7 +415,6 @@ const activate = (context: any) => {
         })
     })
 
-    getInitTheme()
     checkThemeExists()
 };
 

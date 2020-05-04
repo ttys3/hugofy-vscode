@@ -26,6 +26,12 @@ const normalizeThemeDirName = (themeRepoDir: string): string => {
     } else if (/^[\w_-]+-hugo$/.test(themeRepoDir)) {
         // xxx-hugo
         return themeRepoDir.replace(/-hugo$/, '')
+    }  else if (/^theme-[\w_-]+$/.test(themeRepoDir)) {
+        // theme-xxx
+        return themeRepoDir.replace(/^theme-/, '')
+    } else if (/^[\w_-]+-theme$/.test(themeRepoDir)) {
+        // xxx-theme
+        return themeRepoDir.replace(/-theme$/, '')
     } else {
         return themeRepoDir
     }

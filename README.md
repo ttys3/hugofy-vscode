@@ -74,6 +74,11 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.3.0
+
+- fix: theme dir for `xxx-theme` or `theme-xxx`
+- fix: do not check theme exists on non-hugo site directory
+
 ## 0.2.9
 
 - fix: newPost: show detailed error message
