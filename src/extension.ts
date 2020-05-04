@@ -245,7 +245,7 @@ const newPost = (args: any[]) => {
 
 const doSetTheme = (theme: string) => {
     const config = vscode.workspace.getConfiguration('launch')
-    config.update('defaultTheme', theme)
+    config.update('hugo.defaultTheme', theme)
     extCache.set(curThemeCacheKey, theme)
     if (startCmd) {
         stopServer()
@@ -341,7 +341,7 @@ const stopServer = () => {
 
 const getInitTheme = (): any => {
     const config = vscode.workspace.getConfiguration('launch')
-    const theme = config.get('defaultTheme')
+    const theme = config.get('hugo.defaultTheme')
     if (theme) {
         extCache.set(curThemeCacheKey, theme)
     } else {
