@@ -85,6 +85,8 @@ const build = () => {
         if (code !== 0) {
             console.error(`hugo build err code: ${code}`)
             vscode.window.showErrorMessage('hugofy: hugo build failed')
+        } else {
+            vscode.window.showInformationMessage('hugofy: hugo build success')
         }
     })
 }

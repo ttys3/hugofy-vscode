@@ -67,6 +67,40 @@
 			}
 		]
 	},
+	"keybindings": [
+		{
+			"key": "ctrl+shift+h s",
+			"command": "hugofy.startServer"
+		},
+		{
+			"key": "ctrl+shift+h b",
+			"command": "hugofy.build"
+		},
+		{
+			"key": "ctrl+shift+h d",
+			"command": "hugofy.downloadTheme"
+		},
+		{
+			"key": "ctrl+shift+h p",
+			"command": "hugofy.newPost"
+		},
+		{
+			"key": "ctrl+shift+h n",
+			"command": "hugofy.newSite"
+		},
+		{
+			"key": "ctrl+shift+h t",
+			"command": "hugofy.setTheme"
+		},
+		{
+			"key": "ctrl+shift+h x",
+			"command": "hugofy.stopServer"
+		},
+		{
+			"key": "ctrl+shift+h v",
+			"command": "hugofy.getVersion"
+		}
+	],
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
 		"compile": "webpack --mode none",
