@@ -74,6 +74,11 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.3.1
+
+- refactor: change theme config key to `hugo.defaultTheme` since `launch.json` is general
+- fix: fix extension recommendations
+
 ## 0.3.0
 
 - fix: theme dir for `xxx-theme` or `theme-xxx`

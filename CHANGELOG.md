@@ -4,6 +4,11 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.3.1
+
+- refactor: change theme config key to `hugo.defaultTheme` since `launch.json` is general
+- fix: fix extension recommendations
+
 ## 0.3.0
 
 - fix: theme dir for `xxx-theme` or `theme-xxx`
