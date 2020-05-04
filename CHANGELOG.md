@@ -4,6 +4,10 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.3.3
+
+- fix: fixup default keybindings
+
 ## 0.3.2
 
 - refactor: add default keybindings, show message on success build

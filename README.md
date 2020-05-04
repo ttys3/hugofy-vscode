@@ -66,13 +66,25 @@ code .
 
 ## Known Issues
 
+### theme specific config
+
 for some themes which need specific config,
 
 you'll need copy config to your `config.toml` from `themes/[Hugo theme name]/exampleSite/config.toml` after new theme installed,
 
 otherwise the theme will not work
 
+### default keyindings
+
+the default keybindings, for example `ctrl+shift+h s` means press `ctrl+shift+h` first and release, then press `s`.
+it may shadows the default `ctrl+shift+h` keybinding which used for `Search: Replace in Files`,
+you can change the extension keybindings yourself if you really need get the original `ctrl+shift+h` keybinding back.
+
 ## Release Notes
+
+## 0.3.3
+
+- fix: fixup default keybindings
 
 ## 0.3.2
 

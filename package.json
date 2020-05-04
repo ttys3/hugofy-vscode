@@ -4,7 +4,7 @@
 	"repository": "https://github.com/ttys3/hugofy-vscode",
 	"displayName": "hugofy",
 	"description": "modified hugofy extension with extra support for hugo page bundles",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"icon": "hugo.png",
 	"engines": {
 		"vscode": "^1.44.0"
@@ -65,42 +65,42 @@
 				"command": "hugofy.stopServer",
 				"title": "Hugofy: Stop Server"
 			}
+		],
+		"keybindings": [
+			{
+				"key": "ctrl+shift+h s",
+				"command": "hugofy.startServer"
+			},
+			{
+				"key": "ctrl+shift+h b",
+				"command": "hugofy.build"
+			},
+			{
+				"key": "ctrl+shift+h d",
+				"command": "hugofy.downloadTheme"
+			},
+			{
+				"key": "ctrl+shift+h p",
+				"command": "hugofy.newPost"
+			},
+			{
+				"key": "ctrl+shift+h n",
+				"command": "hugofy.newSite"
+			},
+			{
+				"key": "ctrl+shift+h t",
+				"command": "hugofy.setTheme"
+			},
+			{
+				"key": "ctrl+shift+h x",
+				"command": "hugofy.stopServer"
+			},
+			{
+				"key": "ctrl+shift+h v",
+				"command": "hugofy.getVersion"
+			}
 		]
 	},
-	"keybindings": [
-		{
-			"key": "ctrl+shift+h s",
-			"command": "hugofy.startServer"
-		},
-		{
-			"key": "ctrl+shift+h b",
-			"command": "hugofy.build"
-		},
-		{
-			"key": "ctrl+shift+h d",
-			"command": "hugofy.downloadTheme"
-		},
-		{
-			"key": "ctrl+shift+h p",
-			"command": "hugofy.newPost"
-		},
-		{
-			"key": "ctrl+shift+h n",
-			"command": "hugofy.newSite"
-		},
-		{
-			"key": "ctrl+shift+h t",
-			"command": "hugofy.setTheme"
-		},
-		{
-			"key": "ctrl+shift+h x",
-			"command": "hugofy.stopServer"
-		},
-		{
-			"key": "ctrl+shift+h v",
-			"command": "hugofy.getVersion"
-		}
-	],
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
 		"compile": "webpack --mode none",
