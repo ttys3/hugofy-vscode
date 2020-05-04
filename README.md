@@ -74,6 +74,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.3.2
+
+- refactor: add default keybindings, show message on success build
+
 ## 0.3.1
 
 - refactor: change theme config key to `hugo.defaultTheme` since `launch.json` is general
