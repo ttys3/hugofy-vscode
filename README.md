@@ -74,6 +74,10 @@ otherwise the theme will not work
 
 ## Release Notes
 
+## 0.2.8
+
+- fix: fixup path problem under Windows
+
 ## 0.2.7
 
 - refactor: add actions when theme download failed or succeed

@@ -4,6 +4,10 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.2.8
+
+- fix: fixup path problem under Windows
+
 ## 0.2.7
 
 - refactor: add actions when theme download failed or succeed
