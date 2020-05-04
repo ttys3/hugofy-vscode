@@ -339,12 +339,18 @@ const stopServer = () => {
     }
 }
 
+const getInitTheme = () => {
+    const config = vscode.workspace.getConfiguration('launch')
+    const theme = config.get('defaultTheme')
+    extCache.set(curThemeCacheKey, theme)
+    return theme
+}
+
 const getDefaultTheme = () => {
     if (extCache.has(curThemeCacheKey)) {
         return extCache.get(curThemeCacheKey)
     }
-    const config = vscode.workspace.getConfiguration('launch')
-    return config.get('defaultTheme')
+    return getInitTheme()
 }
 
 const checkHugoInstalled = () => {
@@ -362,9 +368,27 @@ const checkHugoInstalled = () => {
     })
 }
 
+const checkThemeExists = () => {
+    const curTheme = getDefaultTheme()
+    if (curTheme) {
+        const themeFolder = path.join(getRootPath(), 'themes', curTheme)
+        console.log('check %s', themeFolder)
+        if (!fs.existsSync(themeFolder)) {
+            vscode.window.showErrorMessage(`hugo theme "${curTheme}" does not exits, please set new theme`,
+            'Set Theme').then((action: string | undefined) => {
+                if (action !== undefined) {
+                    setTheme()
+                }
+            })
+        }
+    }
+}
+
 // Extension activation method
 const activate = (context: any) => {
     checkHugoInstalled()
+    // Instantiate the cache
+    extCache = new vscache(context)
     // init commands
     context.subscriptions.push(
         vscode.commands.registerCommand('hugofy.getVersion', getVersion),
@@ -377,17 +401,17 @@ const activate = (context: any) => {
         vscode.commands.registerCommand('hugofy.stopServer', stopServer)
     )
 
-    // Instantiate the cache
-    extCache = new vscache(context);
     themeUtils.getThemesList().then((themeList: any) => {
         // Save an item to the cache by specifying a key and value
-        extCache.put(themelistCacheKey, themeList)
-            .then(() => {
-                // console.log(extCache.has(themelistCacheKey)) // returns true
-                // const themelist = extCache.get(themelistCacheKey)
-                // console.log(themelist)
-            })
+        extCache.put(themelistCacheKey, themeList).then(() => {
+            // console.log(extCache.has(themelistCacheKey)) // returns true
+            // const themelist = extCache.get(themelistCacheKey)
+            // console.log(themelist)
+        })
     })
+
+    getInitTheme()
+    checkThemeExists()
 };
 
 exports.activate = activate

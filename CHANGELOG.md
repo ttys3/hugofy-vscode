@@ -4,6 +4,12 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.2.9
+
+- fix: newPost: show detailed error message
+- fix: set correct theme name from config on extension activation
+- fix: check theme exists, if not, notify the user to "Set Theme"
+
 ## 0.2.8
 
 - fix: fixup path problem under Windows
