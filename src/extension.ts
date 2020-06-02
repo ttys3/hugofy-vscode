@@ -408,14 +408,18 @@ const activate = (context: any) => {
         vscode.commands.registerCommand('hugofy.stopServer', stopServer)
     )
 
-    themeUtils.getThemesList().then((themeList: any) => {
-        // Save an item to the cache by specifying a key and value
-        extCache.put(themelistCacheKey, themeList).then(() => {
-            // console.log(extCache.has(themelistCacheKey)) // returns true
-            // const themelist = extCache.get(themelistCacheKey)
-            // console.log(themelist)
+    // prefetch theme list: only work on a hugo project
+    const initTheme = getInitTheme()
+    if (initTheme != "" && initTheme != null) {
+        themeUtils.getThemesList().then((themeList: any) => {
+            // Save an item to the cache by specifying a key and value
+            extCache.put(themelistCacheKey, themeList).then(() => {
+                // console.log(extCache.has(themelistCacheKey)) // returns true
+                // const themelist = extCache.get(themelistCacheKey)
+                // console.log(themelist)
+            })
         })
-    })
+    }
 
     checkThemeExists()
 };
