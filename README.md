@@ -18,19 +18,9 @@ Hugofy is a plugin for Visual Studio Code to make life easier to use [Hugo stati
 
     - **Latin**: e.g. English, français, Deutsch, español, português
 
-    - **Cyrillic**: e.g. Русский язык, български език, українська мова
-
-    - **Chinese**: e.g. 中文 (converts to Latin script using Pinyin with optional tone number)
-
-    - **Japanese**: e.g. ひらがな, カタカナ (converts to Romaji using Hepburn)
-
     For example:
 
     Cyrillic: `Я люблю русский/index.md`  => `ya-lyublyu-russkij/index.md`
-
-    Chinese: `你好/index.md` => `ni-hao/index.md`
-
-    Japanese Romaji: `私は ひらがな が大好き/index.md` => `ha-hiragana-gaki/index.md`
 
 ## Usage
 
@@ -81,6 +71,11 @@ it may shadows the default `ctrl+shift+h` keybinding which used for `Search: Rep
 you can change the extension keybindings yourself if you really need get the original `ctrl+shift+h` keybinding back.
 
 ## Release Notes
+
+## 0.3.4
+
+- refactor: prefetch theme list: only work on a hugo project
+- refactor: new post prompt: default filename to empty. slug: only process latin1
 
 ## 0.3.3
 

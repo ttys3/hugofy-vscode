@@ -4,6 +4,11 @@ All notable changes to the "hugofy" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 0.3.4
+
+- refactor: prefetch theme list: only work on a hugo project
+- refactor: new post prompt: default filename to empty. slug: only process latin1
+
 ## 0.3.3
 
 - fix: fixup default keybindings
