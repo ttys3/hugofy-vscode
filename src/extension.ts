@@ -14,6 +14,8 @@ const vscache = require('vscode-cache')
 import { slugify } from 'transliteration'
 import { URL } from 'url'
 const slugifyConf = { ignore: [path.sep], trim: true, lowercase: true }
+const rKeepOrig = /[^\u0000-\u007f]/
+
 const themelistCacheKey = 'ttys3.hugoy.themeList'
 const curThemeCacheKey = 'ttys3.hugoy.themeCurrent'
 
@@ -29,6 +31,14 @@ class themeItem implements QuickPickItem {
     constructor(public name: string, public gitURL: Uri, public apiURL: Uri) {
         this.label = name
         this.description = gitURL.toString()
+    }
+}
+
+const conditionalSlug = (str: string) => {
+    if (rKeepOrig.test(str)) {
+        return str
+    } else {
+        return slugify(str, slugifyConf)
     }
 }
 
@@ -209,13 +219,14 @@ const newPost = (args: any[]) => {
         setTheme()
         return
     }
-    vscode.window.showInputBox({ placeHolder: 'Enter filename', value: 'index.md' }).then((filename: string | undefined) => {
+    vscode.window.showInputBox({ placeHolder: 'Enter filename', value: '' }).then((filename: string | undefined) => {
         if (filename == undefined) {
             return
         }
+        filename = filename.includes('.') ? filename : path.join(filename, 'index.md')
         const filePath = path.normalize(path.dirname(filename))
-        const fileBasename = slugify(path.basename(filename), slugifyConf)
-        const normalizedPath = filePath.split(path.sep).map((dirname: string) => slugify(dirname, slugifyConf))
+        const fileBasename = conditionalSlug(path.basename(filename))
+        const normalizedPath = filePath.split(path.sep).map((dirname: string) => conditionalSlug(dirname))
         // normalize filename
         filename = path.join(...normalizedPath, fileBasename)
         // console.log('hugofy: normalize filename: %s', filename)
